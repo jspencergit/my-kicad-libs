@@ -1,0 +1,29 @@
+# SamacSys / Library Loader raw downloads - never commit these
+Downloads/
+
+# KiCad temporary files
+*.kicad_prl
+*.kicad_sch-bak
+*.kicad_pcb-bak
+*-save.*
+_autosave-*
+*.000
+*.bak
+*.tmp
+*.lck
+~*
+
+# Cache files
+fp-info-cache
+sym-lib-table
+fp-lib-table
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
