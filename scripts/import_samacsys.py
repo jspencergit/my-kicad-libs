@@ -2,16 +2,16 @@ import sys
 import zipfile
 import shutil
 import re
-import hashlib
 from pathlib import Path
 import importlib.util
 
+# ====================== LOAD PATHS ======================
 spec = importlib.util.spec_from_file_location("paths", "paths.py")
 paths = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(paths)
 
 if len(sys.argv) < 2:
-    print("Usage: python import_samacsys.py <zip_file>")
+    print("Usage: python import_samacsys.py \"path\\to\\ZIP\"")
     sys.exit(1)
 
 zip_path = Path(sys.argv[1])
@@ -27,109 +27,159 @@ with zipfile.ZipFile(zip_path, 'r') as z:
 
 fp_file = next(temp_dir.rglob("*.kicad_mod"), None)
 sym_file = next(temp_dir.rglob("*.kicad_sym"), None)
-step_file = next((f for f in temp_dir.rglob("*.step") if "3D" in str(f).upper()), None) or \
-            next((f for f in temp_dir.rglob("*.stp") if "3D" in str(f).upper()), None) or \
-            next(temp_dir.rglob("*.step"), None) or next(temp_dir.rglob("*.stp"), None)
+step_file = next((f for f in temp_dir.rglob("*") if f.suffix.lower() in (".step", ".stp")), None)
 
 if not fp_file or not sym_file:
     print("❌ Could not find symbol or footprint")
     shutil.rmtree(temp_dir, ignore_errors=True)
     sys.exit(1)
 
-part_name = fp_file.stem
-print(f"Detected part: {part_name}")
+footprint_name = fp_file.stem
+
+# Extract real symbol name
+with open(sym_file, "r", encoding="utf-8") as f:
+    samacsys_data = f.read()
+
+m = re.search(r'\(symbol "([^"]+)"', samacsys_data)
+symbol_name = m.group(1) if m else footprint_name
+
+print(f"Detected → Symbol: {symbol_name}   |   Footprint package: {footprint_name}")
 
 print("\nWhere should this part go?")
 print("1=MyPassives  2=MyConnectors  3=MyPower  4=MyAmplifiers  5=MyICs")
 choice = input("Enter 1-5: ").strip()
 
-lib_map = {
-    "1": ("MyPassives",   "MyPassives.pretty",   "MyPassives"),
-    "2": ("MyConnectors", "MyConnectors.pretty", "MyConnectors"),
-    "3": ("MyPower",      "MyPower.pretty",      "MyPower"),
-    "4": ("MyAmplifiers", "MyAmplifiers.pretty", "MyAmplifiers"),
-    "5": ("MyICs",        "MyICs.pretty",        "MyICs")
-}
+lib_map = {"1":"MyPassives","2":"MyConnectors","3":"MyPower","4":"MyAmplifiers","5":"MyICs"}
+sym_lib = lib_map.get(choice, "MyPower")
 
-sym_lib, fp_lib, three_d_folder = lib_map.get(choice, ("MyPower", "MyPower.pretty", "MyPower"))
+target_sym = paths.YOUR_LIBRARY_ROOT / "symbols" / f"{sym_lib}.kicad_sym"
+target_fp  = paths.YOUR_LIBRARY_ROOT / "footprints" / f"{sym_lib}.pretty" / f"{footprint_name}.kicad_mod"
+target_3d  = paths.YOUR_LIBRARY_ROOT / "3dmodels" / sym_lib / f"{footprint_name}.step"
 
-target_sym = paths.YOUR_LIBRARY_ROOT / "symbols"   / f"{sym_lib}.kicad_sym"
-target_fp  = paths.YOUR_LIBRARY_ROOT / "footprints" / fp_lib / f"{part_name}.kicad_mod"
-target_3d  = paths.YOUR_LIBRARY_ROOT / "3dmodels"  / three_d_folder / f"{part_name}.step"
+# ====================== ROBUST PAREN COUNTING ======================
+def extract_top_level_symbols(content: str):
+    symbols = []
+    i = 0
+    while True:
+        start = content.find('(symbol "', i)
+        if start == -1:
+            break
+        depth = 0
+        in_string = False
+        for j in range(start, len(content)):
+            c = content[j]
+            if c == '"' and (j == 0 or content[j-1] != '\\'):
+                in_string = not in_string
+            elif not in_string:
+                if c == '(':
+                    depth += 1
+                elif c == ')':
+                    depth -= 1
+                    if depth == 0:
+                        symbols.append(content[start:j+1].strip())
+                        i = j + 1
+                        break
+        else:
+            break
+    return symbols
 
-full_3d_path = f"C:/Kicad/MyLibs/3dmodels/{three_d_folder}/{part_name}.step"
+# ====================== SYMBOL LIBRARY (blank or populated) ======================
+print("\n=== Symbol ===")
+if target_sym.exists() and target_sym.stat().st_size > 10:
+    with open(target_sym, "r", encoding="utf-8") as f:
+        lib_content = f.read()
+    existing_blocks = extract_top_level_symbols(lib_content)
+    symbol_exists = any(symbol_name in block[:300] for block in existing_blocks)
+else:
+    existing_blocks = []
+    symbol_exists = False
 
-# === Duplicate protection for footprint ===
-if target_fp.exists():
-    with open(target_fp, "rb") as f:
-        old_hash = hashlib.md5(f.read()).hexdigest()
-    with open(fp_file, "rb") as f:
-        new_hash = hashlib.md5(f.read()).hexdigest()
-    if old_hash == new_hash:
-        print("✅ Footprint identical — skipping")
+if symbol_exists:
+    action = input(f"Symbol '{symbol_name}' already exists. [R]eplace / [K]eep / [S]kip? ").strip().upper()
+    if action == "R":
+        existing_blocks = [b for b in existing_blocks if symbol_name not in b[:300]]
+        print("✅ Old symbol removed")
+        replace_symbol = True
+    elif action == "S":
+        print("✅ Skipped symbol")
+        replace_symbol = False
     else:
-        act = input(f"Footprint differs. [R]eplace / [K]eep / [S]kip? ").strip().upper()
-        if act == "R":
-            shutil.copy2(fp_file, target_fp)
-        elif act == "S":
-            print("✅ Skipped")
-            shutil.rmtree(temp_dir, ignore_errors=True)
-            sys.exit(0)
+        print("✅ Kept existing symbol")
+        replace_symbol = False
+else:
+    replace_symbol = True
 
+if replace_symbol:
+    incoming_blocks = extract_top_level_symbols(samacsys_data)
+    if incoming_blocks:
+        new_block = incoming_blocks[0]
+        full_fp = f"{sym_lib}:{footprint_name}"
+        new_block = re.sub(r'(\(property "Footprint" )"[^"]*"', rf'\1"{full_fp}"', new_block)
+        existing_blocks.append(new_block)
+        print(f"✅ Symbol '{symbol_name}' added (Footprint field → {full_fp})")
+    else:
+        print("⚠️ Could not extract symbol block")
+
+# === BUILD CLEAN LIBRARY ===
+header = '''(kicad_symbol_lib
+  (version 20241209)
+  (generator "kicad_symbol_editor")
+  (generator_version "9.0")
+'''
+final_content = header + "\n".join(existing_blocks) + "\n)"
+
+target_sym.parent.mkdir(parents=True, exist_ok=True)
+target_sym.write_text(final_content, encoding="utf-8")
+print(f"   Library rebuilt cleanly ({len(existing_blocks)} symbols total)")
+
+# ====================== FOOTPRINT ======================
+print("\n=== Footprint ===")
+target_fp.parent.mkdir(parents=True, exist_ok=True)
+if target_fp.exists():
+    action = input(f"Footprint exists. [R]eplace / [K]eep / [S]kip? ").strip().upper()
+    if action == "R":
+        shutil.copy2(fp_file, target_fp)
+        print("✅ Footprint replaced")
+    elif action == "S":
+        print("✅ Skipped footprint")
+        fp_file = None
+    else:
+        print("✅ Kept existing footprint")
+        fp_file = None
+else:
+    shutil.copy2(fp_file, target_fp)
+    print("✅ Footprint copied")
+
+# ====================== 3D MODEL ======================
 if step_file:
-    shutil.copy2(step_file, target_3d)
-    print("✅ 3D model copied")
+    print("\n=== 3D Model ===")
+    target_3d.parent.mkdir(parents=True, exist_ok=True)
+    if target_3d.exists():
+        action = input(f"3D model exists. [R]eplace / [K]eep? ").strip().upper()
+        if action == "R":
+            shutil.copy2(step_file, target_3d)
+            print("✅ 3D model replaced")
+        else:
+            print("✅ Kept existing 3D model")
+    else:
+        shutil.copy2(step_file, target_3d)
+        print("✅ 3D model copied")
 
-# === Create PERFECT footprint (exact format that works for you) ===
-with open(fp_file, "r", encoding="utf-8") as f:
-    content = f.read()
+# ====================== FINAL FOOTPRINT 3D PATH FIX ======================
+if fp_file is not None and target_fp.exists():
+    with open(target_fp, "r", encoding="utf-8") as f:
+        content = f.read()
+    content = re.sub(r'\(module ', '(footprint ', content)
+    content = re.sub(r'\(version \d+\)', '(version 20241229)', content)
+    full_3d_path = f"C:/KiCad/MyLibs/3dmodels/{sym_lib}/{footprint_name}.step"
+    model_block = f'  (model "{full_3d_path}"\n    (offset (xyz 0 0 0))\n    (scale (xyz 1 1 1))\n    (rotate (xyz 0 0 0))\n  )'
+    content = re.sub(r'\(model .*?\)', model_block, content, flags=re.DOTALL)
+    with open(target_fp, "w", encoding="utf-8") as f:
+        f.write(content)
+    print(f"✅ 3D model path fixed in footprint: {full_3d_path}")
 
-# Force correct KiCad 9 footprint format
-content = re.sub(r'\(module ', '(footprint ', content)
-content = re.sub(r'\(version \d+\)', '(version 20241229)', content)
-content = re.sub(r'\(generator_version ".*?"\)', '(generator_version "9.0")', content)
-
-# Replace model block with the exact working one
-model_block = f'''  (model "{full_3d_path}"
-    (offset (xyz 0 0 0))
-    (scale (xyz 1 1 1))
-    (rotate (xyz 0 0 0))
-  )
-)'''
-
-content = re.sub(r'\(model .*?\n.*?\n.*?\n.*?\n\s*\)', model_block, content, flags=re.DOTALL)
-
-with open(target_fp, "w", encoding="utf-8") as f:
-    f.write(content)
-
-print("✅ Footprint written in exact working format")
-
-# === Symbol - clean replacement (never breaks header) ===
-with open(sym_file, "r", encoding="utf-8") as f:
-    data = f.read()
-
-symbol_start = data.find('(symbol "')
-symbol_block = data[symbol_start:]
-
-full_fp = f"{sym_lib}:{part_name}"
-symbol_block = re.sub(
-    r'(\(property "Footprint" )"[^"]*"',
-    rf'\1"{full_fp}"',
-    symbol_block
-)
-
-# Write clean symbol library (header + one symbol only)
-with open(target_sym, "w", encoding="utf-8") as f:
-    f.write('(kicad_symbol_lib\n')
-    f.write('  (version 20241209)\n')
-    f.write('  (generator "kicad_symbol_editor")\n')
-    f.write('  (generator_version "9.0")\n')
-    f.write('\n' + symbol_block)
-
-print("✅ Symbol library written cleanly (no duplicates, correct header)")
-
-print("\n🎉 SUCCESS! This importer now produces exactly the files that work for you.")
-print(f"   Part: {part_name} → {sym_lib}")
-print("   You can now safely import any SamacSys ZIP.")
-
+print(f"\n🎉 SUCCESS: {symbol_name} imported into {sym_lib}")
+print(f"   Symbol:     {target_sym}")
+print(f"   Footprint:  {target_fp}")
+print(f"   3D model:   {target_3d if step_file else 'None'}")
 shutil.rmtree(temp_dir, ignore_errors=True)

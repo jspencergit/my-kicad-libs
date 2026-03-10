@@ -30,10 +30,12 @@
   (pad 3 smd rect (at -1.25 0.95 90) (size 0.6 1.15) (layers F.Cu F.Paste F.Mask))
   (pad 4 smd rect (at 1.25 0.95 90) (size 0.6 1.15) (layers F.Cu F.Paste F.Mask))
   (pad 5 smd rect (at 1.25 -0.95 90) (size 0.6 1.15) (layers F.Cu F.Paste F.Mask))
-    (model "C:/Kicad/MyLibs/3dmodels/MyPower/SOT95P280X100-5N.step"
+    (model "C:/KiCad/MyLibs/3dmodels/MyPower/SOT95P280X100-5N.step"
     (offset (xyz 0 0 0))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))
+  ))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
   )
-)
 )

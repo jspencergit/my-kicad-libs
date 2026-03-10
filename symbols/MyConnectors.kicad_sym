@@ -1,1 +1,8 @@
-(kicad_symbol_lib (version 20240915) (generator "kicad_symbol_editor"))
+(kicad_symbol_lib
+  (version 20241209)
+  (generator "kicad_symbol_editor")
+  (generator_version "9.0")
+)
+
+
+
