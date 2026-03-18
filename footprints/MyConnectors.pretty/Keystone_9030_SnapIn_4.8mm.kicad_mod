@@ -1,0 +1,121 @@
+(footprint "Keystone_9030_SnapIn_4.8mm"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 -0.4064 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "f059defe-ad10-40f1-a5c0-45d63f1b5c74")
+		(effects
+			(font
+				(size 0.8128 0.8128)
+				(thickness 0.1524)
+			)
+		)
+	)
+	(property "Value" "Keystone_9030_SnapIn_4.8mm"
+		(at 0 0.8128 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "8d07d4ff-e4b1-4703-8f39-a88ccfd4199c")
+		(effects
+			(font
+				(size 0.8128 0.8128)
+				(thickness 0.1524)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a670593b-8bce-437b-923a-6a39788978f6")
+		(effects
+			(font
+				(size 0.8128 0.8128)
+				(thickness 0.1524)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "87e263fc-177e-4b37-99cd-0f04a360c2be")
+		(effects
+			(font
+				(size 0.8128 0.8128)
+				(thickness 0.1524)
+			)
+		)
+	)
+	(attr smd)
+	(fp_circle
+		(center 0 0)
+		(end 3.3 0)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "a0f8e600-9818-4677-b1e3-2f2e47bcc0ad")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 4 0)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "B.CrtYd")
+		(uuid "884b883b-65f1-4ff6-a22a-2dce5bdecaa2")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 4 0)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "457c0a41-c113-4775-8f70-79cb1c8e8550")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 2.032 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "c85105b4-0ab4-4700-920d-46a8d9cfb629")
+		(effects
+			(font
+				(size 0.8128 0.8128)
+				(thickness 0.1524)
+			)
+		)
+	)
+	(pad "" np_thru_hole circle
+		(at 0 0)
+		(size 4.8 4.8)
+		(drill 4.8)
+		(layers "*.Cu" "*.Mask")
+		(uuid "4752512a-928c-4511-8f77-ce576aa9f6b3")
+	)
+	(embedded_fonts no)
+	(model "${MY_3DMODEL_DIR}/MyConnectors/9030.stp"
+		(offset
+			(xyz 0 0 -11)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
+)

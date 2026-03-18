@@ -1,0 +1,202 @@
+(footprint "SPCAP_GX_2-Pin"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "SPCAP_GX_2-Pin")
+	(tags "Capacitor Polarised")
+	(property "Reference" "C**"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(uuid "425f369a-e99a-4f0e-aeab-fded55d9e82c")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+			)
+		)
+	)
+	(property "Value" "SPCAP_GX_2-Pin"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "b5705da8-77cc-4455-a55a-43ae8d768812")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "f2c3d841-3ba5-4303-aef1-b787cc6c4355")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "ec1146cf-8d3f-44e4-a625-d71214be7f37")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -3.65 -2.15)
+		(end 3.65 -2.15)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8b81b22a-9639-4b53-8c08-b99c5f07dffe")
+	)
+	(fp_line
+		(start 3.65 2.15)
+		(end -3.65 2.15)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ecdd74b2-517e-4913-9148-2752d93995c6")
+	)
+	(fp_circle
+		(center 5.35 0)
+		(end 5.35 0.05)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "04f56f3b-9335-457a-8cd5-24474cd9d227")
+	)
+	(fp_line
+		(start -5.4 -3.35)
+		(end 6.45 -3.35)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "1ac65eab-b357-4314-a550-e90a46a7b3ce")
+	)
+	(fp_line
+		(start -5.4 3.35)
+		(end -5.4 -3.35)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "177bc89c-2cf7-484f-bc86-f5f9c5de801b")
+	)
+	(fp_line
+		(start 6.45 -3.35)
+		(end 6.45 3.35)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "f1177a75-e670-4537-b2d1-be64a5385fed")
+	)
+	(fp_line
+		(start 6.45 3.35)
+		(end -5.4 3.35)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "3788fe62-0dfe-4b0c-870e-9e701b1cd294")
+	)
+	(fp_line
+		(start -3.65 -2.15)
+		(end 3.65 -2.15)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "f08be646-18d0-4fd7-b7e4-72e1ad7f419b")
+	)
+	(fp_line
+		(start -3.65 2.15)
+		(end -3.65 -2.15)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "e9cce2d3-ec96-403d-ad92-2a048fde5e81")
+	)
+	(fp_line
+		(start 3.65 -2.15)
+		(end 3.65 2.15)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "ddff4e5a-5f75-435c-958d-5eaf3d9ada1b")
+	)
+	(fp_line
+		(start 3.65 2.15)
+		(end -3.65 2.15)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "f5543ee4-1aee-4361-84a4-7e833d00fdd0")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "2b0d2900-3bc6-4274-8eff-b3bb6e09c55f")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.254)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at 3.2 0)
+		(size 2.4 2.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "8c13e168-0b7c-45f6-9273-22ef1ca77b73")
+	)
+	(pad "2" smd rect
+		(at -3.2 0)
+		(size 2.4 2.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "548affe4-e575-46ae-bcfd-e6f0694082b8")
+	)
+	(embedded_fonts no)
+	(model "C:/KiCad/MyLibs/3dmodels/MyPassives/SPCAP_GX_2-Pin.step"
+		(offset
+			(xyz -5 -2.5 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -0 -0 -0)
+		)
+	)
+)

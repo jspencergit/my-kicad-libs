@@ -1,4 +1,4 @@
-(footprint "QFN50P600X600X80-41N-D" (layer F.Cu)
+(module "QFN50P600X600X80-41N-D" (layer F.Cu)
   (descr "40-Lead QFN (6 mm × 6 mm, Plastic Side Wettable)")
   (tags "Integrated Circuit")
   (attr smd)
@@ -62,11 +62,7 @@
   (pad 39 smd rect (at -1.75 -2.95 0) (size 0.3 0.85) (layers F.Cu F.Paste F.Mask))
   (pad 40 smd rect (at -2.25 -2.95 0) (size 0.3 0.85) (layers F.Cu F.Paste F.Mask))
   (pad 41 smd rect (at 0 0 0) (size 4.2 4.2) (layers F.Cu F.Paste F.Mask))
-    (model "C:/KiCad/MyLibs/3dmodels/MyPower/QFN50P600X600X80-41N-D.step"
-    (offset (xyz 0 0 0))
-    (scale (xyz 1 1 1))
-    (rotate (xyz 0 0 0))
-  ))
+  (model "C:/KiCad/MyLibs/3dmodels/MyPower/QFN50P600X600X80-41N-D.step" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0))))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))
   )
